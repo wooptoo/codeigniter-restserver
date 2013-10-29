@@ -51,8 +51,16 @@ class CI_Form_validation {
 		$this->CI->load->helper('form');
 		
 		// Parse http request parameters
-		parse_str(file_get_contents('php://input'), $this->params);
-
+		$input = file_get_contents('php://input');
+		$json = json_decode($input, true);
+		
+		if($json) {
+			$this->params = $json;
+		}
+		else {
+			parse_str($input, $this->params);
+		}
+		
 		// Set the character encoding in MB.
 		if (function_exists('mb_internal_encoding'))
 		{
@@ -283,7 +291,7 @@ class CI_Form_validation {
 	 * @return	bool
 	 */
 	public function run($group = '')
-	{
+	{	
 		// Do we even have any data to process?  Mm?
 		if (count($this->params) == 0)
 		{
